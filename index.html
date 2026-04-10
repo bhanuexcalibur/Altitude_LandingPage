@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Altitude: The Business Account Built for a Borderless World</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black:       #07090B;
+      --surface:     #0D1017;
+      --surface-2:   #141820;
+      --border:      rgba(255,255,255,0.07);
+      --border-lit:  rgba(255,255,255,0.13);
+      --white:       #F2F0EC;
+      --muted:       #64748B;
+      --muted-2:     #94A3B8;
+      --accent:      #C8F55A;
+      --accent-dim:  rgba(200,245,90,0.10);
+      --accent-glow: rgba(200,245,90,0.22);
+      --serif:       'Instrument Serif', Georgia, serif;
+      --sans:        'DM Sans', system-ui, sans-serif;
+      --mono:        'JetBrains Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--black);
+      color: var(--white);
+      font-family: var(--sans);
+      line-height: 1.6;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    body::after {
+      content: '';
+      position: fixed; inset: 0; pointer-events: none; z-index: 9000;
+      opacity: 0.35;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    }
+
+    .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+
+    /* BUTTONS */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px; background: var(--accent);
+      color: #0A0C0E; font-family: var(--sans); font-size: 14px; font-weight: 600;
+      border: none; border-radius: 9px; cursor: pointer; text-decoration: none;
+      transition: transform 0.15s, box-shadow 0.2s; white-space: nowrap;
+    }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px var(--accent-glow); }
+
+    .btn-secondary {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px; background: transparent;
+      color: var(--white); font-family: var(--sans); font-size: 14px; font-weight: 500;
+      border: 1px solid var(--border-lit); border-radius: 9px;
+      cursor: pointer; text-decoration: none;
+      transition: border-color 0.2s, background 0.2s; white-space: nowrap;
+    }
+    .btn-secondary:hover { border-color: rgba(255,255,255,0.28); background: rgba(255,255,255,0.04); }
+
+    /* NAV */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      padding: 18px 0;
+      transition: background 0.3s, border-color 0.3s, backdrop-filter 0.3s;
+      border-bottom: 1px solid transparent;
+    }
+    nav.scrolled {
+      background: rgba(7,9,11,0.85);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border-color: var(--border);
+    }
+    .nav-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      max-width: 1160px; margin: 0 auto; padding: 0 24px;
+    }
+    .nav-logo { font-family: var(--serif); font-size: 21px; color: var(--white); text-decoration: none; letter-spacing: -0.02em; }
+    .nav-logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 32px; list-style: none; }
+    .nav-links a { font-size: 14px; color: var(--muted); text-decoration: none; font-weight: 500; transition: color 0.2s; }
+    .nav-links a:hover { color: var(--white); }
+    .nav-right { display: flex; gap: 10px; align-items: center; }
+    .nav-ghost { padding: 8px 16px; font-size: 13px; font-weight: 500; color: var(--muted-2); background: transparent; border: none; cursor: pointer; font-family: var(--sans); text-decoration: none; transition: color 0.2s; }
+    .nav-ghost:hover { color: var(--white); }
+    .nav-solid { padding: 8px 18px; font-size: 13px; font-weight: 600; color: #0A0C0E; background: var(--accent); border: none; border-radius: 7px; cursor: pointer; font-family: var(--sans); text-decoration: none; transition: opacity 0.2s; }
+    .nav-solid:hover { opacity: 0.88; }
+
+    .hamburger { display: none; flex-direction: column; gap: 5px; cursor: pointer; background: none; border: none; padding: 4px; }
+    .hamburger span { display: block; width: 22px; height: 1.5px; background: var(--white); border-radius: 2px; transition: transform 0.3s, opacity 0.3s; }
+    .hamburger.open span:nth-child(1) { transform: translateY(6.5px) rotate(45deg); }
+    .hamburger.open span:nth-child(2) { opacity: 0; }
+    .hamburger.open span:nth-child(3) { transform: translateY(-6.5px) rotate(-45deg); }
+
+    .mobile-menu { display: none; position: fixed; inset: 0; top: 61px; background: var(--black); z-index: 99; flex-direction: column; padding: 36px 24px; gap: 0; border-top: 1px solid var(--border); }
+    .mobile-menu.open { display: flex; }
+    .mobile-menu a { display: block; font-size: 20px; font-family: var(--serif); color: var(--white); text-decoration: none; padding: 18px 0; border-bottom: 1px solid var(--border); }
+    .mob-cta { margin-top: 28px; display: flex; flex-direction: column; gap: 10px; }
+    .mob-cta .btn-primary, .mob-cta .btn-secondary { justify-content: center; padding: 14px; font-size: 15px; }
+
+    @media (max-width: 768px) {
+      .nav-links, .nav-right { display: none; }
+      .hamburger { display: flex; }
+    }
+
+    /* HERO */
+    .hero { padding: 168px 0 96px; position: relative; overflow: hidden; }
+    .hero-glow { position: absolute; top: -80px; left: 50%; transform: translateX(-50%); width: 1000px; height: 600px; background: radial-gradient(ellipse at 50% 0%, rgba(200,245,90,0.06) 0%, transparent 65%); pointer-events: none; }
+    .hero-content { position: relative; z-index: 2; }
+
+    .eyebrow { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); background: var(--accent-dim); border: 1px solid rgba(200,245,90,0.18); padding: 5px 13px; border-radius: 100px; margin-bottom: 32px; }
+    .eyebrow-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--accent); animation: blink 2s ease infinite; }
+    @keyframes blink { 0%,100%{opacity:1}50%{opacity:0.3} }
+
+    .hero-headline { font-family: var(--serif); font-size: clamp(42px, 6.5vw, 86px); line-height: 1.0; letter-spacing: -0.03em; max-width: 800px; margin-bottom: 24px; animation: up 0.75s ease both; }
+    .hero-headline em { font-style: italic; color: var(--accent); }
+
+    .hero-sub { font-size: clamp(15px, 1.8vw, 18px); color: var(--muted-2); max-width: 520px; line-height: 1.7; font-weight: 300; margin-bottom: 40px; animation: up 0.75s ease 0.1s both; }
+    .hero-sub strong { color: var(--white); font-weight: 500; }
+
+    /* HERO CTA — single PLG form */
+    .hero-cta { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 18px; animation: up 0.75s ease 0.18s both; }
+
+    .plg-form { display: flex; align-items: center; background: var(--surface-2); border: 1px solid var(--border-lit); border-radius: 10px; overflow: hidden; transition: border-color 0.2s; }
+    .plg-form:focus-within { border-color: rgba(200,245,90,0.35); }
+    .plg-form input { background: transparent; border: none; outline: none; padding: 13px 16px; font-family: var(--sans); font-size: 14px; color: var(--white); width: 210px; }
+    .plg-form input::placeholder { color: var(--muted); }
+    .plg-form button { padding: 10px 18px; background: var(--accent); color: #0A0C0E; font-family: var(--sans); font-size: 13px; font-weight: 600; border: none; cursor: pointer; margin: 4px; border-radius: 7px; white-space: nowrap; transition: opacity 0.2s; }
+    .plg-form button:hover { opacity: 0.88; }
+
+    .hero-note { font-size: 12px; color: var(--muted); font-family: var(--mono); letter-spacing: 0.04em; animation: up 0.75s ease 0.24s both; }
+
+    /* LOGO ROW */
+    .logo-row { margin-top: 60px; padding-top: 44px; border-top: 1px solid var(--border); animation: up 0.75s ease 0.3s both; }
+    .logo-row-label { font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 20px; display: block; }
+    .logo-chips { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .logo-chip { padding: 6px 14px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; font-size: 13px; color: var(--muted-2); font-weight: 500; transition: border-color 0.2s, color 0.2s; }
+    .logo-chip:hover { border-color: var(--border-lit); color: var(--white); }
+
+    @keyframes up { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+
+    /* TICKER */
+    .ticker { border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); background: var(--surface); overflow: hidden; }
+    .ticker-track { display: flex; width: max-content; animation: scroll 35s linear infinite; }
+    .ticker-track:hover { animation-play-state: paused; }
+    @keyframes scroll { to{transform:translateX(-50%)} }
+    .ticker-item { display: flex; align-items: center; gap: 8px; padding: 16px 36px; border-right: 1px solid var(--border); white-space: nowrap; }
+    .t-label { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+    .t-val { font-family: var(--mono); font-size: 13px; font-weight: 500; color: var(--white); }
+    .t-hi { color: var(--accent); }
+
+    /* SECTION */
+    section { padding: 96px 0; }
+    .section-label { display: block; font-family: var(--mono); font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent); margin-bottom: 16px; }
+    .section-title { font-family: var(--serif); font-size: clamp(30px, 4vw, 50px); letter-spacing: -0.025em; line-height: 1.06; margin-bottom: 18px; }
+    .section-body { font-size: 16px; color: var(--muted-2); line-height: 1.7; font-weight: 300; max-width: 500px; }
+
+    .reveal { opacity: 0; transform: translateY(22px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.in { opacity: 1; transform: translateY(0); }
+
+    /* PROBLEM */
+    .problem { background: var(--black); }
+    .problem-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-top: 52px; }
+    .p-cell { background: var(--surface); padding: 34px; transition: background 0.2s; }
+    .p-cell:hover { background: var(--surface-2); }
+    .p-icon { width: 38px; height: 38px; border-radius: 9px; background: var(--surface-2); border: 1px solid var(--border-lit); display: flex; align-items: center; justify-content: center; font-size: 17px; margin-bottom: 16px; }
+    .p-cell h3 { font-family: var(--serif); font-size: 20px; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .p-cell p { font-size: 14px; color: var(--muted-2); line-height: 1.65; }
+    @media (max-width: 600px) { .problem-grid { grid-template-columns: 1fr; } }
+
+    /* PRODUCT */
+    .product { background: var(--surface); }
+    .tabs { display: flex; gap: 6px; flex-wrap: wrap; margin: 40px 0 34px; }
+    .tab { padding: 8px 16px; border-radius: 7px; background: transparent; border: 1px solid var(--border); color: var(--muted); font-family: var(--sans); font-size: 13px; font-weight: 500; cursor: pointer; transition: all 0.2s; }
+    .tab.on { background: var(--accent-dim); border-color: rgba(200,245,90,0.28); color: var(--accent); }
+    .tab:hover:not(.on) { border-color: var(--border-lit); color: var(--muted-2); }
+    .tab-pane { display: none; }
+    .tab-pane.on { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; }
+    @media (max-width: 760px) { .tab-pane.on { grid-template-columns: 1fr; } }
+
+    .pane-copy h3 { font-family: var(--serif); font-size: 28px; letter-spacing: -0.02em; margin-bottom: 14px; }
+    .pane-copy p { font-size: 16px; color: var(--muted-2); line-height: 1.7; margin-bottom: 22px; }
+    .feat-list { list-style: none; display: flex; flex-direction: column; gap: 10px; }
+    .feat-list li { display: flex; align-items: flex-start; gap: 9px; font-size: 15px; color: var(--muted-2); line-height: 1.5; }
+    .feat-list li::before { content: '→'; color: var(--accent); font-family: var(--mono); flex-shrink: 0; }
+    .feat-list li strong { color: var(--white); font-weight: 500; }
+
+    .pane-visual { background: var(--black); border: 1px solid var(--border); border-radius: 14px; padding: 28px; position: relative; overflow: hidden; }
+    .pane-visual::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 70% 20%, rgba(200,245,90,0.04), transparent 60%); }
+    .mock-head { font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+    .mock-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border); font-size: 14px; position: relative; z-index: 1; }
+    .mock-row:last-of-type { border-bottom: none; }
+    .m-label { color: var(--muted-2); }
+    .m-sub { font-size: 11px; color: var(--muted); font-family: var(--mono); margin-top: 2px; }
+    .m-val { font-family: var(--mono); font-weight: 500; text-align: right; }
+    .badge { font-family: var(--mono); font-size: 10px; padding: 2px 7px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .b-green { background: rgba(200,245,90,0.1); color: var(--accent); }
+    .b-blue  { background: rgba(59,139,235,0.1); color: #7AB8F5; }
+    .b-amber { background: rgba(212,168,67,0.1);  color: #D4A843; }
+    .mock-foot { margin-top: 14px; padding-top: 13px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; font-family: var(--mono); font-size: 11px; color: var(--muted); position: relative; z-index: 1; }
+
+    /* NUMBERS */
+    .numbers { background: var(--black); }
+    .num-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; margin-top: 48px; }
+    .num-cell { background: var(--surface); padding: 30px 24px; }
+    .num-val { font-family: var(--serif); font-size: clamp(32px, 3.8vw, 48px); line-height: 1; letter-spacing: -0.03em; margin-bottom: 6px; }
+    .num-val .hi { color: var(--accent); }
+    .num-desc { font-size: 14px; color: var(--muted); line-height: 1.55; }
+    @media (max-width: 860px) { .num-grid { grid-template-columns: repeat(2,1fr); } }
+    @media (max-width: 440px) { .num-grid { grid-template-columns: 1fr; } }
+
+    /* COMPARE */
+    .compare { background: var(--surface); }
+    .table-wrap { overflow-x: auto; margin-top: 48px; border-radius: 14px; border: 1px solid var(--border); }
+    table { width: 100%; border-collapse: collapse; min-width: 560px; background: var(--surface); }
+    thead th { padding: 14px 18px; text-align: left; font-family: var(--mono); font-size: 11px; letter-spacing: 0.09em; text-transform: uppercase; color: var(--muted); border-bottom: 1px solid var(--border); background: var(--surface-2); }
+    thead th.hi { background: var(--accent-dim); color: var(--accent); border-color: rgba(200,245,90,0.18); }
+    tbody td { padding: 14px 18px; font-size: 14px; border-bottom: 1px solid var(--border); vertical-align: middle; }
+    tbody tr:last-child td { border-bottom: none; }
+    td.feat { color: var(--muted-2); }
+    td.hi { background: rgba(200,245,90,0.025); color: var(--white); font-weight: 500; }
+    .ck { color: var(--accent); }
+    .nx { color: #2D3748; }
+    .pt { color: #D4A843; }
+    tbody tr:hover td { background: rgba(255,255,255,0.018); }
+    tbody tr:hover td.hi { background: rgba(200,245,90,0.045); }
+
+    /* WHO */
+    .who { background: var(--black); }
+    .who-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 48px; }
+    .who-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 28px; position: relative; overflow: hidden; transition: border-color 0.22s, transform 0.22s; }
+    .who-card:hover { border-color: var(--border-lit); transform: translateY(-3px); }
+    .who-card::after { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: left; transition: transform 0.25s; }
+    .who-card:hover::after { transform: scaleX(1); }
+    .who-card span.icon { font-size: 24px; display: block; margin-bottom: 14px; }
+    .who-card h3 { font-family: var(--serif); font-size: 19px; margin-bottom: 8px; letter-spacing: -0.01em; }
+    .who-card p { font-size: 14px; color: var(--muted-2); line-height: 1.65; }
+    .who-tag { display: inline-block; margin-top: 14px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--accent); background: var(--accent-dim); border: 1px solid rgba(200,245,90,0.15); padding: 3px 8px; border-radius: 4px; }
+    @media (max-width: 840px) { .who-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 520px) { .who-grid { grid-template-columns: 1fr; } }
+
+    /* THESIS */
+    .thesis { background: var(--surface); padding: 80px 0; position: relative; overflow: hidden; }
+    .thesis::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 0% 100%, rgba(200,245,90,0.04), transparent 50%), radial-gradient(ellipse at 100% 0%, rgba(59,139,235,0.04), transparent 50%); pointer-events: none; }
+    .thesis-inner { position: relative; z-index: 1; }
+    .thesis-q { font-family: var(--serif); font-size: clamp(22px, 3.4vw, 40px); line-height: 1.22; letter-spacing: -0.022em; max-width: 760px; margin: 0 auto 12px; text-align: center; }
+    .thesis-q em { font-style: italic; color: var(--accent); }
+    .thesis-attr { text-align: center; font-family: var(--mono); font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); margin-bottom: 60px; }
+    .thesis-cols { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 32px; }
+    .th-num { font-family: var(--mono); font-size: 11px; color: var(--accent); letter-spacing: 0.1em; margin-bottom: 12px; display: block; }
+    .th-pt h4 { font-family: var(--serif); font-size: 18px; margin-bottom: 8px; }
+    .th-pt p { font-size: 14px; color: var(--muted-2); line-height: 1.65; }
+    @media (max-width: 700px) { .thesis-cols { grid-template-columns: 1fr; gap: 24px; } }
+
+    /* FINAL CTA */
+    .final-cta { background: var(--black); padding: 110px 0; text-align: center; position: relative; overflow: hidden; }
+    .final-cta::before { content: ''; position: absolute; bottom: 0; left: 50%; transform: translateX(-50%); width: 700px; height: 350px; background: radial-gradient(ellipse at 50% 100%, rgba(200,245,90,0.09), transparent 70%); pointer-events: none; }
+    .final-cta-inner { position: relative; z-index: 1; }
+    .cta-title { font-family: var(--serif); font-size: clamp(36px, 5.5vw, 68px); letter-spacing: -0.03em; line-height: 1.0; margin-bottom: 16px; }
+    .cta-title em { font-style: italic; color: var(--accent); }
+    .cta-sub { font-size: 17px; color: var(--muted-2); font-weight: 300; max-width: 420px; margin: 0 auto 40px; line-height: 1.65; }
+    .cta-dual { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+    .cta-note { margin-top: 18px; font-family: var(--mono); font-size: 11px; color: var(--muted); letter-spacing: 0.04em; }
+
+    /* FOOTER */
+    footer { background: var(--surface); border-top: 1px solid var(--border); padding: 52px 0 36px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 44px; }
+    .f-brand .nav-logo { font-size: 19px; }
+    .f-brand p { font-size: 13px; color: var(--muted); line-height: 1.65; margin-top: 10px; max-width: 240px; }
+    .f-col h5 { font-family: var(--mono); font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+    .f-col ul { list-style: none; display: flex; flex-direction: column; gap: 9px; }
+    .f-col ul li a { font-size: 13px; color: var(--muted-2); text-decoration: none; transition: color 0.2s; }
+    .f-col ul li a:hover { color: var(--white); }
+    .footer-bot { border-top: 1px solid var(--border); padding-top: 24px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .f-legal { font-family: var(--mono); font-size: 11px; color: var(--muted); }
+    .f-disclaimer { font-size: 11px; color: #2D3748; line-height: 1.6; margin-top: 20px; padding-top: 18px; border-top: 1px solid var(--border); }
+    @media (max-width: 860px) { .footer-grid { grid-template-columns: 1fr 1fr; } }
+    @media (max-width: 500px) { .footer-grid { grid-template-columns: 1fr; } .footer-bot { flex-direction: column; align-items: flex-start; } }
+
+    /* PMM BADGE */
+    .pmm-note { position: fixed; bottom: 24px; right: 24px; z-index: 500; background: var(--surface-2); border: 1px solid var(--border-lit); border-radius: 10px; padding: 13px 16px; max-width: 240px; animation: up 0.8s ease 2s both; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+    .pmm-note strong { font-family: var(--mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); display: block; margin-bottom: 4px; }
+    .pmm-note p { font-size: 12px; color: var(--muted-2); line-height: 1.5; }
+    .pmm-close { position: absolute; top: 8px; right: 12px; cursor: pointer; color: var(--muted); font-size: 15px; line-height: 1; background: none; border: none; font-family: var(--sans); }
+    .pmm-close:hover { color: var(--white); }
+
+    /* mobile hero cta stacking */
+    @media (max-width: 540px) {
+      .plg-form { width: 100%; }
+      .plg-form input { flex: 1; width: auto; }
+      .hero-cta { flex-direction: column; align-items: flex-start; }
+      .btn-secondary { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mob">
+  <a href="#product" onclick="closeMob()">Product</a>
+  <a href="#compare" onclick="closeMob()">Why Altitude</a>
+  <a href="#who" onclick="closeMob()">Who It's For</a>
+  <a href="#numbers" onclick="closeMob()">The Numbers</a>
+  <div class="mob-cta">
+    <a href="#" class="btn-primary">Open an Account</a>
+    <a href="#" class="btn-secondary">Book a Demo</a>
+  </div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">Altitude<span>.</span></a>
+    <ul class="nav-links">
+      <li><a href="#product">Product</a></li>
+      <li><a href="#compare">Why Altitude</a></li>
+      <li><a href="#who">Who It's For</a></li>
+      <li><a href="#numbers">The Numbers</a></li>
+    </ul>
+    <div class="nav-right">
+      <a href="#" class="nav-ghost">Sign In</a>
+      <a href="#" class="nav-solid">Open an Account</a>
+    </div>
+    <button class="hamburger" id="hbg" onclick="toggleMob()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-glow"></div>
+  <div class="container hero-content">
+
+    <div class="eyebrow"><span class="eyebrow-dot"></span>Now Open · 150+ Countries</div>
+
+    <h1 class="hero-headline">
+      Your bank was built<br>for a world that<br><em>no longer exists.</em>
+    </h1>
+
+    <p class="hero-sub">
+      Altitude is a stablecoin-native business account:
+      <strong>USD &amp; EUR accounts, zero-fee global payments, 3.25% APY on reserves</strong>.
+      Available to any company on earth. No US entity. No week-long onboarding.
+    </p>
+
+    <!-- SINGLE PLG CTA — email capture only -->
+    <div class="hero-cta">
+      <div class="plg-form">
+        <input type="email" placeholder="you@company.com" aria-label="Work email" />
+        <button type="button">Open an Account</button>
+      </div>
+    </div>
+
+    <p class="hero-note">Takes ~5 minutes &nbsp;·&nbsp; No US entity required &nbsp;·&nbsp; Available in 150+ countries</p>
+
+    <!-- LOGO ROW — its own visual element, not inline text -->
+    <div class="logo-row">
+      <span class="logo-row-label">Trusted by companies building on the frontier</span>
+      <div class="logo-chips">
+        <div class="logo-chip">Drift Protocol</div>
+        <div class="logo-chip">Jupiter Exchange</div>
+        <div class="logo-chip">Kamino Finance</div>
+        <div class="logo-chip">Metaplex</div>
+        <div class="logo-chip">MetaDAO</div>
+        <div class="logo-chip">500+ companies</div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker-track">
+    <div class="ticker-item"><span class="t-label">APY</span><span class="t-val t-hi">3.25%</span></div>
+    <div class="ticker-item"><span class="t-label">Countries</span><span class="t-val">150+</span></div>
+    <div class="ticker-item"><span class="t-label">Transfer Fees</span><span class="t-val t-hi">$0</span></div>
+    <div class="ticker-item"><span class="t-label">Settlement</span><span class="t-val t-hi">24 / 7</span></div>
+    <div class="ticker-item"><span class="t-label">Value Secured</span><span class="t-val">$15B+</span></div>
+    <div class="ticker-item"><span class="t-label">Businesses</span><span class="t-val">500+</span></div>
+    <div class="ticker-item"><span class="t-label">Rails</span><span class="t-val">ACH · Wire · SEPA · SWIFT · USDC</span></div>
+    <div class="ticker-item"><span class="t-label">Backed By</span><span class="t-val">Haun · Multicoin · Coinbase · Solana</span></div>
+    <div class="ticker-item"><span class="t-label">APY</span><span class="t-val t-hi">3.25%</span></div>
+    <div class="ticker-item"><span class="t-label">Countries</span><span class="t-val">150+</span></div>
+    <div class="ticker-item"><span class="t-label">Transfer Fees</span><span class="t-val t-hi">$0</span></div>
+    <div class="ticker-item"><span class="t-label">Settlement</span><span class="t-val t-hi">24 / 7</span></div>
+    <div class="ticker-item"><span class="t-label">Value Secured</span><span class="t-val">$15B+</span></div>
+    <div class="ticker-item"><span class="t-label">Businesses</span><span class="t-val">500+</span></div>
+    <div class="ticker-item"><span class="t-label">Rails</span><span class="t-val">ACH · Wire · SEPA · SWIFT · USDC</span></div>
+    <div class="ticker-item"><span class="t-label">Backed By</span><span class="t-val">Haun · Multicoin · Coinbase · Solana</span></div>
+  </div>
+</div>
+
+<!-- PROBLEM -->
+<section class="problem reveal" id="problem">
+  <div class="container">
+    <span class="section-label">The Problem</span>
+    <h2 class="section-title">Your bank is taxing every<br>global transaction you make.</h2>
+    <p class="section-body">Not with a line item. With FX spreads, correspondent bank cuts, settlement delays, and geographic bans. The infrastructure underneath hasn't changed since the 1970s.</p>
+    <div class="problem-grid">
+      <div class="p-cell">
+        <div class="p-icon">⏳</div>
+        <h3>2–5 Days to Move Money</h3>
+        <p>You approve an invoice Monday. Your contractor in Singapore sees the money Friday, if the correspondent chain behaves. Altitude settles stablecoin transfers in seconds.</p>
+      </div>
+      <div class="p-cell">
+        <div class="p-icon">💸</div>
+        <h3>3–6% on Every Wire, Quietly</h3>
+        <p>The $25 wire fee is the part they show you. The FX spread, intermediary cut, and receiving fee are invisible. On $500K/year in payments, that's up to $30K handed away for nothing.</p>
+      </div>
+      <div class="p-cell">
+        <div class="p-icon">🌍</div>
+        <h3>"We Don't Serve Your Country"</h3>
+        <p>Mercury dropped founders in 13 countries in 2024. Brex cut off thousands of businesses with no warning. For companies outside the US-EU axis, a dollar account has always been a privilege. It shouldn't be.</p>
+      </div>
+      <div class="p-cell">
+        <div class="p-icon">📉</div>
+        <h3>Your Treasury Earns Nothing</h3>
+        <p>Standard business checking pays 0–0.1% while inflation runs at 3%. Mercury's treasury requires a $250K minimum. Altitude pays 3.25% APY from any qualifying balance, backed by BlackRock US Treasuries.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT -->
+<section class="product reveal" id="product">
+  <div class="container">
+    <span class="section-label">The Product</span>
+    <h2 class="section-title">One platform. Every rail.<br>Your entire finance stack.</h2>
+    <p class="section-body">Altitude combines operating accounts, treasury, bill pay, and enterprise controls in a single platform, rebuilt on stablecoin rails, not patched onto them.</p>
+
+    <div class="tabs">
+      <button class="tab on" onclick="tab('accounts',this)">Accounts & Payments</button>
+      <button class="tab" onclick="tab('treasury',this)">Treasury & Yield</button>
+      <button class="tab" onclick="tab('controls',this)">Controls & Team</button>
+      <button class="tab" onclick="tab('ops',this)">Bill Pay & Ops</button>
+    </div>
+
+    <div class="tab-pane on" id="tp-accounts">
+      <div class="pane-copy">
+        <h3>Real bank details, USD and EUR, in minutes.</h3>
+        <p>Get a US routing number, EU IBAN, and access to every major payment rail. No US entity required. Send to any country, receive from any rail.</p>
+        <ul class="feat-list">
+          <li><strong>USD accounts</strong> with US routing number, ACH and wire</li>
+          <li><strong>EUR accounts</strong> with EU IBAN, SEPA across 36 countries</li>
+          <li><strong>Zero fees</strong> on all pay-ins and payouts, any rail</li>
+          <li><strong>Stablecoin transfers</strong>: 2-second settlement, 24/7, any day</li>
+          <li><strong>Zero-fee on/off ramp</strong> between USDC and USD or EUR</li>
+        </ul>
+      </div>
+      <div class="pane-visual">
+        <div class="mock-head">Recent Transactions</div>
+        <div class="mock-row">
+          <div><div class="m-label">Vendor: Drift Labs</div><div class="m-sub">USDC · 2s settlement</div></div>
+          <div style="text-align:right"><div class="m-val" style="color:var(--muted-2)">−$14,200</div><span class="badge b-green">Settled</span></div>
+        </div>
+        <div class="mock-row">
+          <div><div class="m-label">Payroll Batch: 12 Recipients</div><div class="m-sub">ACH · US Domestic</div></div>
+          <div style="text-align:right"><div class="m-val" style="color:var(--muted-2)">−$38,600</div><span class="badge b-blue">Processing</span></div>
+        </div>
+        <div class="mock-row">
+          <div><div class="m-label">Client: Metaplex Foundation</div><div class="m-sub">Wire · International</div></div>
+          <div style="text-align:right"><div class="m-val" style="color:var(--accent)">+$75,000</div><span class="badge b-green">Received</span></div>
+        </div>
+        <div class="mock-row">
+          <div><div class="m-label">Office Rent: Berlin</div><div class="m-sub">SEPA · EUR Account</div></div>
+          <div style="text-align:right"><div class="m-val" style="color:var(--muted-2)">−€4,500</div><span class="badge b-green">Settled</span></div>
+        </div>
+        <div class="mock-foot"><span>Platform fees charged</span><span style="color:var(--accent)">$0.00</span></div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tp-treasury">
+      <div class="pane-copy">
+        <h3>Your idle cash should earn more than 0.1%.</h3>
+        <p>Altitude pays 3.25% APY on qualifying balances from day one, backed by BlackRock-managed US Treasuries. No minimum balance required.</p>
+        <ul class="feat-list">
+          <li><strong>3.25% APY</strong>: no minimum, BlackRock US Treasuries</li>
+          <li><strong>DeFi lending vaults</strong>: higher yield, institutional risk controls</li>
+          <li><strong>Hold SOL, BTC, USDC</strong> alongside USD and EUR in one view</li>
+          <li><strong>24/7 FX conversion</strong>: no bank cutoff windows, ever</li>
+          <li><strong>Institutional credit</strong> backed by investment-grade assets</li>
+        </ul>
+      </div>
+      <div class="pane-visual">
+        <div class="mock-head">Treasury Overview</div>
+        <div class="mock-row"><div class="m-label">USD Operating Balance</div><div class="m-val">$284,200</div></div>
+        <div class="mock-row"><div class="m-label">EUR Balance</div><div class="m-val">€42,700</div></div>
+        <div class="mock-row">
+          <div><div class="m-label">Yield: BlackRock BUIDL</div><div class="m-sub">3.25% APY</div></div>
+          <div style="text-align:right"><div class="m-val" style="color:var(--accent)">$150,000</div><span class="badge b-green">Earning</span></div>
+        </div>
+        <div class="mock-row"><div class="m-label">SOL Holdings</div><div class="m-val">1,240 SOL</div></div>
+        <div class="mock-foot"><span>Est. monthly yield</span><span style="color:var(--accent)">+$406</span></div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tp-controls">
+      <div class="pane-copy">
+        <h3>CFO-grade controls enforced at the protocol level.</h3>
+        <p>Built on Squads Protocol, the same multisig infrastructure securing $15B+ on Solana. Approval workflows aren't a UX setting. They're enforced by code.</p>
+        <ul class="feat-list">
+          <li><strong>Multisig approvals</strong>: require 2-of-3, 3-of-5, any threshold</li>
+          <li><strong>Role-based access</strong>: view, initiate, approve, execute separately</li>
+          <li><strong>Spending limits</strong> per user, role, or time period</li>
+          <li><strong>Immutable audit trail</strong>: every action logged on-chain</li>
+          <li><strong>Agent-compatible</strong>: policies execute programmatically</li>
+        </ul>
+      </div>
+      <div class="pane-visual">
+        <div class="mock-head">Approval Queue</div>
+        <div class="mock-row">
+          <div><div class="m-label">Vendor Payment · $48,000</div><div class="m-sub">Requires 2 of 3 approvals</div></div>
+          <div style="text-align:right"><span class="badge b-amber">1 / 3</span></div>
+        </div>
+        <div class="mock-row">
+          <div><div class="m-label">Card Limit Increase</div><div class="m-sub">Finance Admin request</div></div>
+          <div style="text-align:right"><span class="badge b-amber">Pending</span></div>
+        </div>
+        <div class="mock-row">
+          <div><div class="m-label">Payroll: 28 Recipients</div><div class="m-sub">Scheduled: Friday</div></div>
+          <div style="text-align:right"><span class="badge b-green">Pre-approved</span></div>
+        </div>
+        <div class="mock-foot"><span>Enforcement layer</span><span style="color:var(--accent)">Protocol-level</span></div>
+      </div>
+    </div>
+
+    <div class="tab-pane" id="tp-ops">
+      <div class="pane-copy">
+        <h3>Close your books without the end-of-month scramble.</h3>
+        <p>Tag transactions as they happen, approve bills inside the same platform where your money lives, and export QuickBooks-ready files on demand.</p>
+        <ul class="feat-list">
+          <li><strong>Bill pay</strong> in USD, EUR, or stablecoins, with attachments</li>
+          <li><strong>Tag and categorize</strong> transactions in real time</li>
+          <li><strong>QuickBooks CSV exports</strong>: maps to your chart of accounts</li>
+          <li><strong>Payment tracking</strong> with status, records, and notes</li>
+          <li><strong>Corporate cards</strong> (coming soon): spend against your balance</li>
+        </ul>
+      </div>
+      <div class="pane-visual">
+        <div class="mock-head">Bill Pay Queue</div>
+        <div class="mock-row"><div><div class="m-label">Netlify: Hosting</div><div class="m-sub">Due Apr 15 · Infrastructure</div></div><div class="m-val">$1,240</div></div>
+        <div class="mock-row"><div><div class="m-label">Design Retainer</div><div class="m-sub">USDC · Creative</div></div><div class="m-val">$3,500</div></div>
+        <div class="mock-row"><div><div class="m-label">Legal Counsel Q2</div><div class="m-sub">Wire · Legal</div></div><div class="m-val">$8,000</div></div>
+        <div class="mock-foot"><span>Accounting export</span><span style="color:var(--accent)">QuickBooks-ready</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- NUMBERS -->
+<section class="numbers reveal" id="numbers">
+  <div class="container">
+    <span class="section-label">By the Numbers</span>
+    <h2 class="section-title">What stablecoin rails actually<br>mean for your business.</h2>
+    <div class="num-grid">
+      <div class="num-cell">
+        <div class="num-val">$<span class="hi">0</span></div>
+        <div class="num-desc">Platform fees on every pay-in and payout, any rail, any currency, any amount</div>
+      </div>
+      <div class="num-cell">
+        <div class="num-val"><span class="hi">3.25</span>%</div>
+        <div class="num-desc">APY on qualifying balances, backed by BlackRock US Treasuries, no minimum balance</div>
+      </div>
+      <div class="num-cell">
+        <div class="num-val"><span class="hi">150</span>+</div>
+        <div class="num-desc">Countries where any business can open a USD or EUR account with no local entity required</div>
+      </div>
+      <div class="num-cell">
+        <div class="num-val">$<span class="hi">15</span>B+</div>
+        <div class="num-desc">Secured on Squads Protocol, the infrastructure Altitude runs on, never compromised</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPARE -->
+<section class="compare reveal" id="compare">
+  <div class="container">
+    <span class="section-label">Why Altitude</span>
+    <h2 class="section-title">The only account where the<br>rails are the advantage.</h2>
+    <p class="section-body">Mercury and Brex are good products with traditional bank constraints. Altitude is the only option built natively on stablecoin rails, not retrofitted on top of them.</p>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th style="width:32%">Capability</th>
+            <th class="hi">Altitude</th>
+            <th>Mercury</th>
+            <th>Brex</th>
+            <th>Wise Business</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="feat">No US entity required</td><td class="hi"><span class="ck">✓</span></td><td><span class="nx">✗</span></td><td><span class="nx">✗</span></td><td><span class="pt">Partial</span></td></tr>
+          <tr><td class="feat">Stablecoin-native rails</td><td class="hi"><span class="ck">✓</span></td><td><span class="nx">✗</span></td><td><span class="nx">✗</span></td><td><span class="nx">✗</span></td></tr>
+          <tr><td class="feat">Zero fees on all transfers</td><td class="hi"><span class="ck">✓</span></td><td><span class="nx">✗</span></td><td><span class="nx">✗</span></td><td><span class="nx">✗</span></td></tr>
+          <tr><td class="feat">APY with no minimum balance</td><td class="hi"><span class="ck">✓ 3.25%</span></td><td><span class="pt">$250K min</span></td><td><span class="pt">Premium tier</span></td><td><span class="pt">~4.9% USD</span></td></tr>
+          <tr><td class="feat">24/7 settlement</td><td class="hi"><span class="ck">✓</span></td><td><span class="nx">✗</span></td><td><span class="nx">✗</span></td><td><span class="pt">Partial</span></td></tr>
+          <tr><td class="feat">Protocol-level multisig</td><td class="hi"><span class="ck">✓</span></td><td><span class="pt">Basic</span></td><td><span class="pt">Basic</span></td><td><span class="nx">✗</span></td></tr>
+          <tr><td class="feat">Hold crypto + USD/EUR</td><td class="hi"><span class="ck">✓ SOL, BTC, USDC</span></td><td><span class="nx">✗</span></td><td><span class="nx">✗</span></td><td><span class="nx">✗</span></td></tr>
+          <tr><td class="feat">Available in 150+ countries</td><td class="hi"><span class="ck">✓</span></td><td><span class="pt">Selective</span></td><td><span class="pt">US-primary</span></td><td><span class="ck">✓</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- WHO -->
+<section class="who reveal" id="who">
+  <div class="container">
+    <span class="section-label">Who It's For</span>
+    <h2 class="section-title">Built for businesses that<br>operate without borders.</h2>
+    <div class="who-grid">
+      <div class="who-card">
+        <span class="icon">⚡</span>
+        <h3>Crypto & Web3 Teams</h3>
+        <p>You run treasury on stablecoins but still pay vendors and taxes in dollars. Altitude bridges both: zero-fee on/off ramp alongside a real USD bank account.</p>
+        <span class="who-tag">Native Use Case</span>
+      </div>
+      <div class="who-card">
+        <span class="icon">🌏</span>
+        <h3>Global Startups</h3>
+        <p>Incorporated in Singapore, team in Colombia, revenue from the US. Mercury closed your account. Brex requires VC funding. Altitude opens in minutes, for anyone.</p>
+        <span class="who-tag">No US Entity</span>
+      </div>
+      <div class="who-card">
+        <span class="icon">🔁</span>
+        <h3>Remote-First Companies</h3>
+        <p>Your payroll goes to 15 countries every Friday. Altitude lets you batch-pay contractors via USDC, ACH, or SEPA from one dashboard, in seconds, at zero cost.</p>
+        <span class="who-tag">Global Payroll</span>
+      </div>
+      <div class="who-card">
+        <span class="icon">🏢</span>
+        <h3>Agencies & Service Businesses</h3>
+        <p>Clients can pay via stablecoin for instant settlement, or via standard bank rails. Collections in seconds, not the usual 3–5 day wire wait.</p>
+        <span class="who-tag">Faster Collections</span>
+      </div>
+      <div class="who-card">
+        <span class="icon">📦</span>
+        <h3>Import / Export</h3>
+        <p>Stablecoins lock in value at the moment of payment, eliminating FX exposure during 2-day clearing windows that quietly erode your margin.</p>
+        <span class="who-tag">Zero FX Risk</span>
+      </div>
+      <div class="who-card">
+        <span class="icon">🏛️</span>
+        <h3>Corporate Treasury</h3>
+        <p>Idle cash earning nothing. Altitude's BlackRock-backed yield starts at any balance level. DeFi vaults available for teams ready to go further.</p>
+        <span class="who-tag">Yield on Reserves</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- THESIS -->
+<section class="thesis reveal">
+  <div class="container thesis-inner">
+    <p class="thesis-q">"The question isn't <em>if</em> stablecoins consume finance. It's <em>when.</em> We're here to compress that timeline."</p>
+    <p class="thesis-attr">Stepan Simkin, CEO · Squads / Altitude</p>
+    <div class="thesis-cols">
+      <div class="th-pt">
+        <span class="th-num">01 / The Rails Have Changed</span>
+        <h4>ACH and SWIFT were designed when international calls cost $3/minute.</h4>
+        <p>Stablecoins aren't a crypto product. They're a replacement for correspondent banking. Altitude runs on them natively, not as an add-on.</p>
+      </div>
+      <div class="th-pt">
+        <span class="th-num">02 / $300B in Circulation</span>
+        <h4>This isn't speculation anymore. Real businesses are settling real invoices in USDC today.</h4>
+        <p>Over $300 billion in stablecoins are in active circulation. The category has crossed from experiment to critical infrastructure.</p>
+      </div>
+      <div class="th-pt">
+        <span class="th-num">03 / The Trust Layer Exists</span>
+        <h4>Altitude is built on infrastructure that secures $15B+ and has never been compromised.</h4>
+        <p>You're not betting on new infrastructure. You're using what institutions already rely on: Squads Protocol on Solana.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta reveal">
+  <div class="container final-cta-inner">
+    <h2 class="cta-title">Start operating<br>at <em>Altitude.</em></h2>
+    <p class="cta-sub">Open a USD or EUR business account in minutes. Available in 150+ countries. No US entity required.</p>
+    <div class="cta-dual">
+      <a href="#" class="btn-primary">Open an Account →</a>
+      <a href="#" class="btn-secondary">Book a Demo</a>
+    </div>
+    <p class="cta-note">No commitment &nbsp;·&nbsp; ~5 minutes &nbsp;·&nbsp; Backed by Haun · Multicoin · Coinbase · Solana</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="f-brand">
+        <a href="#" class="nav-logo">Altitude<span style="color:var(--accent)">.</span></a>
+        <p>Banking for companies on the frontier. Built on Squads Protocol. Available in 150+ countries.</p>
+      </div>
+      <div class="f-col">
+        <h5>Product</h5>
+        <ul>
+          <li><a href="#">Accounts</a></li>
+          <li><a href="#">Treasury</a></li>
+          <li><a href="#">Payments</a></li>
+          <li><a href="#">Cards</a></li>
+          <li><a href="#">Bill Pay</a></li>
+        </ul>
+      </div>
+      <div class="f-col">
+        <h5>Company</h5>
+        <ul>
+          <li><a href="#">About Us</a></li>
+          <li><a href="#">Blog</a></li>
+          <li><a href="#">Careers</a></li>
+          <li><a href="#">Squads Protocol</a></li>
+        </ul>
+      </div>
+      <div class="f-col">
+        <h5>Support</h5>
+        <ul>
+          <li><a href="#">Help Center</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bot">
+      <span class="f-legal">© 2026 Squads Labs · Altitude</span>
+      <span class="f-legal">Built on Solana · Secured by Squads Protocol</span>
+    </div>
+    <p class="f-disclaimer">Altitude is a non-custodial wallet solution provided by Selimor Investments Limited ("Squads"), a financial technology platform. Squads is not a bank or financial institution. Financial products and services are provided by third-party service providers. Squads partners with Bridge to facilitate stablecoin transactions. APY represents rewards on qualifying balances and may vary. Not available in all jurisdictions.</p>
+  </div>
+</footer>
+
+<!-- PMM BADGE -->
+<div class="pmm-note" id="pmmNote">
+  <button class="pmm-close" onclick="document.getElementById('pmmNote').style.display='none'">×</button>
+  <strong>PMM Work Sample</strong>
+  <p>Repositioned landing page for Altitude by Bhanu Kumar. Not an official Altitude page.</p>
+</div>
+
+<script>
+  // nav scroll
+  const navEl = document.getElementById('nav');
+  window.addEventListener('scroll', () => navEl.classList.toggle('scrolled', scrollY > 36));
+
+  // mobile menu
+  function toggleMob() {
+    document.getElementById('mob').classList.toggle('open');
+    document.getElementById('hbg').classList.toggle('open');
+  }
+  function closeMob() {
+    document.getElementById('mob').classList.remove('open');
+    document.getElementById('hbg').classList.remove('open');
+  }
+
+  // tabs
+  function tab(id, btn) {
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('on'));
+    document.querySelectorAll('.tab').forEach(b => b.classList.remove('on'));
+    document.getElementById('tp-' + id).classList.add('on');
+    btn.classList.add('on');
+  }
+
+  // scroll reveal
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } });
+  }, { threshold: 0.08, rootMargin: '0px 0px -50px 0px' });
+  document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>
